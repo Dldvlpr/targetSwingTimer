@@ -8,6 +8,7 @@
 -- Panneau d'options natif (Settings API Retail / Classic, repli InterfaceOptions).
 
 local TST = TargetSwingTimer
+local L = TST.L
 local panel = CreateFrame("Frame", "TargetSwingTimerOptions")
 panel.name = "Target Swing Timer"
 
@@ -164,7 +165,7 @@ title:SetPoint("TOPLEFT", 16, -16)
 title:SetText("Target Swing Timer")
 local sub = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 sub:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -4)
-sub:SetText("/tst lock | unlock | reset | speed <s>  —  déverrouillée, la barre se déplace à la souris.")
+sub:SetText(L.SUBTITLE)
 
 local textures = {}
 for _, t in ipairs(TST.textures) do textures[#textures + 1] = t end
@@ -177,32 +178,29 @@ if LSM then
     table.sort(textures, function(a, b) return a[1] < b[1] end)
 end
 
-Check("Verrouiller la position", "locked", "Décoché : la barre est visible en permanence et se déplace par glisser-déposer.")
-Check("Afficher le texte (restant / vitesse)", "showText")
-Check("Afficher l'étincelle", "showSpark")
-Check("Inverser le sens de remplissage", "reverse")
-Cycle("Mode", "fillMode", { { "Se vide jusqu'au swing", "drain" }, { "Se remplit jusqu'au swing", "fill" } })
-Cycle("Texture", "texture", textures)
-ColorSwatch("Couleur de la barre", "color")
-ColorSwatch("Couleur du fond", "bgColor")
-Slider("Largeur", "width", 80, 600, 5)
-Slider("Hauteur", "height", 8, 60, 1)
-Slider("Taille du texte", "fontSize", 8, 24, 1)
+Check(L.OPT_LOCK, "locked", L.TIP_LOCK)
+Check(L.OPT_SHOW_TEXT, "showText")
+Check(L.OPT_SHOW_SPARK, "showSpark")
+Check(L.OPT_REVERSE, "reverse")
+Cycle(L.OPT_MODE, "fillMode", { { L.MODE_DRAIN, "drain" }, { L.MODE_FILL, "fill" } })
+Cycle(L.OPT_TEXTURE, "texture", textures)
+ColorSwatch(L.OPT_BAR_COLOR, "color")
+ColorSwatch(L.OPT_BG_COLOR, "bgColor")
+Slider(L.OPT_WIDTH, "width", 80, 600, 5)
+Slider(L.OPT_HEIGHT, "height", 8, 60, 1)
+Slider(L.OPT_FONT_SIZE, "fontSize", 8, 24, 1)
 
 column(320)
-Check("Parry haste", "parryHaste",
-    "Quand la cible pare une attaque de mêlée, son prochain swing est avancé (mécanique Classic, absente en Retail).")
-Check("Latence automatique (GetNetStats)", "autoLatency",
-    "Coché : latences home et world lues du client. Décoché : valeurs saisies ci-dessous.")
-Check("Repère de latence home sur la barre", "showLatencyTick",
-    "Trait blanc placé une latence home avant le swing serveur : le moment où appuyer pour que l'action arrive à temps.")
-local home = Slider("Latence home (ms)", "latencyHome", 0, 500, 5)
-local world = Slider("Latence world (ms)", "latencyWorld", 0, 500, 5)
+Check(L.OPT_PARRY, "parryHaste", L.TIP_PARRY)
+Check(L.OPT_AUTO_LATENCY, "autoLatency", L.TIP_AUTO_LATENCY)
+Check(L.OPT_LATENCY_TICK, "showLatencyTick", L.TIP_LATENCY_TICK)
+local home = Slider(L.OPT_LATENCY_HOME, "latencyHome", 0, 500, 5)
+local world = Slider(L.OPT_LATENCY_WORLD, "latencyWorld", 0, 500, 5)
 local hint = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 hint:SetPoint("TOPLEFT", world, "BOTTOMLEFT", 0, -18)
 hint:SetWidth(280)
 hint:SetJustifyH("LEFT")
-hint:SetText("World : retard d'arrivée du journal de combat, soustrait au temps restant. Home : délai de vos propres actions, matérialisé par le repère.")
+hint:SetText(L.HINT_LATENCY)
 
 local function refreshLatencyState()
     local manual = not TST.db.autoLatency

@@ -7,6 +7,17 @@
 ## SavedVariables: TargetSwingTimerDB
 ## OptionalDeps: LibSharedMedia-3.0
 
+Locale\enUS.lua
+Locale\frFR.lua
+Locale\deDE.lua
+Locale\esES.lua
+Locale\esMX.lua
+Locale\itIT.lua
+Locale\ptBR.lua
+Locale\ruRU.lua
+Locale\koKR.lua
+Locale\zhCN.lua
+Locale\zhTW.lua
 Core.lua
 Options.lua
 Data_Wrath.lua

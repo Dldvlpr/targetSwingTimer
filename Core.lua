@@ -8,9 +8,11 @@
 -- Target Swing Timer : suit le swing d'auto-attaque (main droite) de la cible.
 -- Hôte : World of Warcraft (Retail, Classic Era, MoP Classic) ; Lua 5.1.
 
-local ADDON = ...
+local ADDON, NS = ...
 local TST = CreateFrame("Frame", "TargetSwingTimerFrame", UIParent)
 _G.TargetSwingTimer = TST
+TST.L = NS.L
+local L = NS.L
 TST.data = {}   -- rempli par Data_<version>.lua : npcId -> vitesse de base en ms
 
 ------------------------------------------------------------------------
@@ -161,6 +163,29 @@ local function onCombatLog()
     end
 end
 
+-- Moteur 12.x (Midnight, WoW Forever 1.60) : COMBAT_LOG_EVENT_UNFILTERED est interdit aux addons,
+-- même sous pcall (popup ADDON_ACTION_FORBIDDEN). Repli sur UNIT_COMBAT : on ne voit que les coups
+-- reçus par le joueur, donc la barre ne suit la cible que lorsqu'elle attaque le joueur.
+local HAS_COMBAT_LOG = not (C_DamageMeter or issecretvalue or (C_CombatLog and C_CombatLog.SetFilteredEventsEnabled))
+
+local MELEE_ACTIONS = { WOUND = true, MISS = true, DODGE = true, PARRY = true, BLOCK = true }
+
+local function onUnitCombat(unit, action, _, _, schoolMask)
+    if issecretvalue and (issecretvalue(action) or issecretvalue(schoolMask)) then return end
+    if not targetGUID then return end
+    local now = GetTime()
+    if unit == "player" then
+        -- Coup physique reçu pendant que la cible me frappe : compté comme un swing de la cible.
+        -- Les techniques physiques passent par le filtre « attaque supplémentaire » de onSwing.
+        if MELEE_ACTIONS[action] and (schoolMask == nil or schoolMask == 1)
+            and UnitIsUnit("targettarget", "player") then
+            onSwing(targetGUID, now)
+        end
+    elseif unit == "target" and action == "PARRY" and TST.db.parryHaste then
+        onParry(targetGUID, now)
+    end
+end
+
 local function onTargetChanged()
     targetGUID = UnitGUID("target")
     prune(GetTime())
@@ -169,12 +194,20 @@ end
 
 TST:RegisterEvent("ADDON_LOADED")
 TST:RegisterEvent("PLAYER_TARGET_CHANGED")
-TST:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 TST:RegisterEvent("PLAYER_REGEN_ENABLED")
 TST:RegisterEvent("PLAYER_REGEN_DISABLED")
-TST:SetScript("OnEvent", function(self, event, arg1)
+if HAS_COMBAT_LOG then
+    TST:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+elseif TST.RegisterUnitEvent then
+    TST:RegisterUnitEvent("UNIT_COMBAT", "player", "target")
+else
+    TST:RegisterEvent("UNIT_COMBAT")
+end
+TST:SetScript("OnEvent", function(self, event, arg1, ...)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
         onCombatLog()
+    elseif event == "UNIT_COMBAT" then
+        onUnitCombat(arg1, ...)
     elseif event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_REGEN_ENABLED"
         or event == "PLAYER_REGEN_DISABLED" then
         onTargetChanged()
@@ -329,17 +362,17 @@ SlashCmdList.TARGETSWINGTIMER = function(msg)
     if cmd == "lock" or cmd == "unlock" then
         TST.db.locked = cmd == "lock"
         TST:ApplySettings()
-        print("|cff33ff99TST|r barre " .. (TST.db.locked and "verrouillée" or "déverrouillée"))
+        print("|cff33ff99TST|r " .. (TST.db.locked and L.MSG_LOCKED or L.MSG_UNLOCKED))
     elseif cmd == "reset" and targetGUID then
         units[targetGUID] = nil
         local key = npcKey(targetGUID)
         if key then TST.db.speeds[key] = nil end
-        print("|cff33ff99TST|r vitesse oubliée pour la cible")
+        print("|cff33ff99TST|r " .. L.MSG_SPEED_FORGOTTEN)
     elseif cmd == "speed" and targetGUID and tonumber(arg) then
         local u = getUnit(targetGUID)
         u.speed, u.samples = tonumber(arg), 3
         saveSpeed(targetGUID, u.speed)
-        print("|cff33ff99TST|r vitesse forcée : " .. arg .. " s")
+        print("|cff33ff99TST|r " .. string.format(L.MSG_SPEED_FORCED, arg))
     else
         TST:OpenOptions()
     end

@@ -1,0 +1,33 @@
+-- Locale/enUS.lua : base de repli, toujours chargée.
+-- Les autres fichiers de Locale/ surchargent ces clés quand GetLocale() correspond.
+local _, NS = ...
+NS.L = {
+    SUBTITLE = "/tst lock | unlock | reset | speed <s>  —  when unlocked, drag the bar with the mouse.",
+    OPT_LOCK = "Lock position",
+    TIP_LOCK = "Unchecked: the bar is always visible and can be dragged.",
+    OPT_SHOW_TEXT = "Show text (remaining / speed)",
+    OPT_SHOW_SPARK = "Show spark",
+    OPT_REVERSE = "Reverse fill direction",
+    OPT_MODE = "Mode",
+    MODE_DRAIN = "Drains until the swing",
+    MODE_FILL = "Fills until the swing",
+    OPT_TEXTURE = "Texture",
+    OPT_BAR_COLOR = "Bar color",
+    OPT_BG_COLOR = "Background color",
+    OPT_WIDTH = "Width",
+    OPT_HEIGHT = "Height",
+    OPT_FONT_SIZE = "Text size",
+    OPT_PARRY = "Parry haste",
+    TIP_PARRY = "When the target parries a melee attack, its next swing comes sooner (Classic mechanic, absent in Retail).",
+    OPT_AUTO_LATENCY = "Automatic latency (GetNetStats)",
+    TIP_AUTO_LATENCY = "Checked: home and world latency read from the client. Unchecked: values entered below.",
+    OPT_LATENCY_TICK = "Home latency marker on the bar",
+    TIP_LATENCY_TICK = "White line placed one home latency before the server swing: the moment to press so the action lands in time.",
+    OPT_LATENCY_HOME = "Home latency (ms)",
+    OPT_LATENCY_WORLD = "World latency (ms)",
+    HINT_LATENCY = "World: combat log arrival delay, subtracted from the remaining time. Home: delay of your own actions, shown by the marker.",
+    MSG_LOCKED = "bar locked",
+    MSG_UNLOCKED = "bar unlocked",
+    MSG_SPEED_FORGOTTEN = "speed forgotten for the target",
+    MSG_SPEED_FORCED = "speed forced: %s s",
+}
