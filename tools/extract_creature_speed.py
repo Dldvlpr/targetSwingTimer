@@ -1,4 +1,4 @@
-# Target Swing Timer. Copyright (C) 2026 Ludovic. GPL-2.0-or-later, voir LICENSE.
+# Target Swing Timer. Copyright (C) 2026 les auteurs de Target Swing Timer. GPL-2.0-or-later, voir LICENSE.
 """Extrait (entry, BaseAttackTime) de la table creature_template d'un dump SQL MySQL.
 Usage : extract.py <dump.sql|dump.sql.gz> <sortie.tsv>
 """

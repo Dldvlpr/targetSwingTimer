@@ -1,5 +1,5 @@
 -- Target Swing Timer, addon World of Warcraft.
--- Copyright (C) 2026 Ludovic
+-- Copyright (C) 2026 les auteurs de Target Swing Timer
 --
 -- This program is free software; you can redistribute it and/or modify it under the terms
 -- of the GNU General Public License as published by the Free Software Foundation; either

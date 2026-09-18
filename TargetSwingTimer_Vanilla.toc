@@ -1,7 +1,6 @@
 ## Interface: 11509
 ## Title: Target Swing Timer
 ## Notes: Barre de swing (auto-attaque) de la cible, avec parry haste, filtrage des attaques supplémentaires et compensation de latence.
-## Author: Ludovic
 ## Version: 1.0.0
 ## X-License: GPL-2.0-or-later
 ## SavedVariables: TargetSwingTimerDB
